@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 
@@ -7,7 +8,7 @@ import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
     <h1 mat-dialog-title>Show all Topics</h1>
     <div mat-dialog-content>
       <ul>
-        @for (topic of data.topics; track $index) {
+        @for (topic of topics(); track $index) {
           <li>
             {{ topic }}
           </li>
@@ -23,4 +24,5 @@ import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 })
 export class TopicModalComponent {
   data = inject(MAT_DIALOG_DATA);
+  topics = toSignal(this.data.topics$);
 }
