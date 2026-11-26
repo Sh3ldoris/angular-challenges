@@ -6,10 +6,11 @@ import { UserStore } from './user.service';
   selector: 'address-user',
   template: `
     <div cd-flash class="m-4 block border border-gray-500 p-4">
+      @let address = userService.userAddress();
       Address:
-      <div>Street: {{ userService.user().address.street }}</div>
-      <div>ZipCode: {{ userService.user().address.zipCode }}</div>
-      <div>City: {{ userService.user().address.city }}</div>
+      <div>Street: {{ address.street }}</div>
+      <div>ZipCode: {{ address.zipCode }}</div>
+      <div>City: {{ address.city }}</div>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
