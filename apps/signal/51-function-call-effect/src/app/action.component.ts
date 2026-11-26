@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from './user.service';
@@ -38,7 +39,13 @@ export class ActionsComponent {
 
   constructor() {
     effect(() => {
-      this.userService.log(this.action() ?? 'No action selected');
+      // Register the action as dependency
+      const action = this.action();
+
+      untracked(() => {
+        // Log when just the action changes
+        this.userService.log(action ?? 'No action selected');
+      });
     });
   }
 }
