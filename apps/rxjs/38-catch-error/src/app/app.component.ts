@@ -4,12 +4,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  OnInit,
   inject,
+  OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { Subject, concatMap, map } from 'rxjs';
+import { catchError, exhaustMap, map, of, Subject } from 'rxjs';
 
 @Component({
   imports: [CommonModule, FormsModule],
@@ -47,8 +47,13 @@ export class AppComponent implements OnInit {
     this.submit$
       .pipe(
         map(() => this.input),
-        concatMap((value) =>
-          this.http.get(`https://jsonplaceholder.typicode.com/${value}/1`),
+        exhaustMap((value) =>
+          this.http.get(`https://jsonplaceholder.typicode.com/${value}/1`).pipe(
+            catchError((err) => {
+              console.error('Error from API', err);
+              return of('Error calling API!');
+            }),
+          ),
         ),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -56,10 +61,6 @@ export class AppComponent implements OnInit {
         next: (value) => {
           console.log(value);
           this.response = value;
-        },
-        error: (error) => {
-          console.log(error);
-          this.response = error;
         },
         complete: () => console.log('done'),
       });
